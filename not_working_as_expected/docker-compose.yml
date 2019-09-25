@@ -1,0 +1,23 @@
+version: '3'
+services:
+  localstack:
+    image: "localstack/localstack"
+    environment:
+      SERVICES: sts,s3,lambda,cloudformation,iam,cloudwatch,sqs,dynamodb
+      AWS_DEFAULT_REGION: us-east-1
+      DEFAULT_REGION: us-east-1
+      LAMBDA_EXECUTOR: docker
+      LOCALSTACK_HOSTNAME: localhost
+      DEBUG: "true"
+      DOCKER_HOST: unix:///var/run/docker.sock
+      LAMBDA_DOCKER_NETWORK: localstack
+    ports:
+      - "4567-4597:4567-4597"
+      - "8080:8080"
+    volumes:
+      - "./.localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+networks:
+  default:
+    external:
+      name: localstack

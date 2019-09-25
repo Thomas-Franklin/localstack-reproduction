@@ -1,0 +1,56 @@
+
+service: working
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: java8
+  region: us-east-1
+
+  environment:
+    QUEUE_REGION: elasticmq
+    OVERRIDE_QUEUE_URL: "http://localstack:4576/"
+    QUEUE_URL: "http://localstack:4576/queue/TestQueue"
+    AWS_REGION: us-east-1
+    AWS_ACCESS_KEY_ID: foo
+    AWS_SECRET_ACCESS_KEY: foo
+
+package:
+  artifact: build/libs/working-0.1.0.jar
+
+functions:
+  sendMessage:
+    handler: working.SenderLambda
+    name: sendMessage
+    reservedConcurrency: 1
+  receiveMessage:
+    handler: working.ReceivingLambda
+    name: receiveMessage
+    reservedConcurrency: 10
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+            - TestQueue
+            - Arn
+          batchSize: 1
+
+resources:
+  Resources:
+    TestQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "TestQueue"
+
+plugins:
+  - serverless-localstack
+
+custom:
+  localstack:
+    stages:
+      - local
+    debug: true
+
