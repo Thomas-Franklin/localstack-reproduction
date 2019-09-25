@@ -23,20 +23,20 @@ package:
 
 functions:
   sendMessage:
-    handler: working.SenderLambda
+    handler: not.working.as.expected.SenderLambda
     name: sendMessage
     reservedConcurrency: 1
   receiveMessage:
-    handler: working.ReceivingLambda
+    handler: not.working.as.expected.ReceivingLambda
     name: receiveMessage
     reservedConcurrency: 10
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-            - TestQueue
-            - Arn
-          batchSize: 1
+    # events:
+    #   - sqs:
+    #       arn:
+    #         Fn::GetAtt:
+    #         - TestQueue
+    #         - Arn
+    #       batchSize: 1
 
 resources:
   Resources:
